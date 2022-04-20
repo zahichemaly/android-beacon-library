@@ -73,7 +73,7 @@ dependencies {
 }
 
 ext {
-    PUBLISH_GROUP_ID = 'org.altbeacon'
+    PUBLISH_GROUP_ID = 'io.github.zahichemaly'
     PUBLISH_VERSION = version
     PUBLISH_ARTIFACT_ID = 'android-beacon-library'
 }
