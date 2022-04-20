@@ -28,6 +28,7 @@ import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.ServiceStartNotAllowedException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -270,9 +271,18 @@ public class BeaconService extends Service {
                 .getForegroundServiceNotification();
         int notificationId = beaconManager
                 .getForegroundServiceNotificationId();
-        if (notification != null &&
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            this.startForeground(notificationId, notification);
+        if (notification != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                try {
+                    LogManager.i(TAG, "Starting foreground beacon scanning service.");
+                    this.startForeground(notificationId, notification);
+                } catch (ServiceStartNotAllowedException e) {
+                    LogManager.e(TAG, "Cannot start foreground beacon scanning service when in background on Android 12+.");
+                }
+            } else {
+                LogManager.i(TAG, "Starting foreground beacon scanning service.");
+                this.startForeground(notificationId, notification);
+            }
         }
     }
 

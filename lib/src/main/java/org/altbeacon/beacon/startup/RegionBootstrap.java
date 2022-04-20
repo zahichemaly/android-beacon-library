@@ -1,8 +1,10 @@
 package org.altbeacon.beacon.startup;
 
+import android.app.ServiceStartNotAllowedException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Build;
 import android.os.RemoteException;
 
 import org.altbeacon.beacon.BeaconConsumer;
@@ -227,10 +229,22 @@ public class RegionBootstrap {
          */
         @Override
         public boolean bindService(Intent intent, ServiceConnection conn, int arg2) {
-            this.serviceIntent = intent;
-            context.startService(intent);
-            return context.bindService(intent, conn, arg2);
-
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                try {
+                    this.serviceIntent = intent;
+                    context.startService(intent);
+                    return context.bindService(intent, conn, arg2);
+                }
+                catch (ServiceStartNotAllowedException e) {
+                    LogManager.e(TAG, "Cannot start foreground beacon scanning service when in background on Android 12+.");
+                    return false;
+                }
+            }
+            else {
+                this.serviceIntent = intent;
+                context.startService(intent);
+                return context.bindService(intent, conn, arg2);
+            }
         }
 
         /**
