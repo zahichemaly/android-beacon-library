@@ -25,6 +25,7 @@ package org.altbeacon.beacon;
 
 import android.annotation.TargetApi;
 import android.app.Notification;
+import android.app.ServiceStartNotAllowedException;
 import android.bluetooth.BluetoothManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -39,6 +40,7 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import org.altbeacon.beacon.logging.LogManager;
 import org.altbeacon.beacon.logging.Loggers;
@@ -443,8 +445,7 @@ public class BeaconManager {
                                     " service.  A consumer is already bound, so it should be started");
                         }
                         else {
-                            LogManager.i(TAG, "Starting foreground beacon scanning service.");
-                            mContext.startForegroundService(intent);
+                            startForegroundServiceIfPossible(intent);
                         }
                     }
                     else {
@@ -453,6 +454,21 @@ public class BeaconManager {
                 }
                 LogManager.d(TAG, "consumer count is now: %s", consumers.size());
             }
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void startForegroundServiceIfPossible(Intent intent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            try {
+                LogManager.i(TAG, "Starting foreground beacon scanning service.");
+                mContext.startForegroundService(intent);
+            } catch (ServiceStartNotAllowedException e) {
+                LogManager.e(TAG, "Cannot start foreground beacon scanning service when in background on Android 12+.");
+            }
+        } else {
+            LogManager.i(TAG, "Starting foreground beacon scanning service.");
+            mContext.startForegroundService(intent);
         }
     }
 
