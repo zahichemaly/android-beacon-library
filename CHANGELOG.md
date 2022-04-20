@@ -1,4 +1,22 @@
-### 2.19 /2021 / 2021-08-09
+### 2.19.4 / 2022-03-10
+
+- Add ApiTrackingLogger (#1078, David G. Young)
+- Allow scanning with only BLUETOOTH_SCAN permission and not just location permissions. (#1065, Marcel Schnelle)
+- Fix bug blocking job scheduler scans on Android 12. (#1077, David G. Young)
+
+### 2.19.3 / 2021-10-5
+
+- Fix failing intent-backed scans broken by Android 12 changes in the 2.19 release. (#1059, David G. Young)
+
+### 2.19.2 / 2021-08-18
+
+- Fix NullPointerException in IntentScanStrategyCoordinator (#1053, PhilipTocsen)
+
+### 2.19.1 / 2021-08-13
+
+- Improve default background mode with autobind (#1051, David G. Young)
+
+### 2.19 / 2021-08-09
 
 - Manual binding/unbinding deprecated.  (#1046, David G. Young)
 - Android 12 changes. (#1043, Nick Badal, David G. Young)
